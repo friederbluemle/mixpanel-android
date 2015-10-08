@@ -1,11 +1,20 @@
-.DS_Store
-*~
-local.properties
-bin
-gen
-docs
-*.iml
-.idea
-build/
+# Generated files
+bin/
+gen/
+
+# Gradle files
 .gradle/
-gradle/
+build/
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+# IntelliJ project files
+*.iml
+.idea/
+
+# Misc
+.DS_Store
+
+# Selendroid binaries
+selendroid-standalone*.jar
