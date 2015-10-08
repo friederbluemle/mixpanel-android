@@ -2,7 +2,6 @@ Getting Started
 ---------------
 You can find getting started guides for using Mixpanel at:
 
-* https://mixpanel.com/help/reference/android#installing-eclipse for installing in Eclipse.
 * https://mixpanel.com/help/reference/android#installing-as for installing in Android Studio.
 * https://mixpanel.com/help/reference/android#initializing for library initialization.
 * https://mixpanel.com/help/reference/android#sending_events for tracking events.
