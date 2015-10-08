@@ -8,13 +8,7 @@
   name in several places before your application will work.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.mixpanel.example.hello"
-    android:versionCode="1"
-    android:versionName="1.0" >
-
-    <uses-sdk
-        android:minSdkVersion="9"
-        android:targetSdkVersion="19" />
+    package="com.mixpanel.example.hello" >
 
     <!--
       This permission is required to allow the application to send events and properties to Mixpanel.
