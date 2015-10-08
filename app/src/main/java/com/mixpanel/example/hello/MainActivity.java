@@ -1,6 +1,5 @@
 package com.mixpanel.example.hello;
 
-import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
@@ -42,7 +42,7 @@ import java.util.Random;
  * @author mixpanel
  *
  */
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
 
     /*
      * You will use a Mixpanel API token to allow your app to send data to Mixpanel. To get your token
