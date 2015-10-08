@@ -29,20 +29,20 @@ import java.util.Random;
 /**
  * A little application that allows people to update their Mixpanel information,
  * and receive push notifications from a Mixpanel project.
- *
+ * <p/>
  * For more information about integrating Mixpanel with your Android application,
  * please check out:
- *
- *     https://mixpanel.com/docs/integration-libraries/android
- *
+ * <p/>
+ * https://mixpanel.com/docs/integration-libraries/android
+ * <p/>
  * For instructions on enabling push notifications from Mixpanel, please see
- *
- *     https://mixpanel.com/docs/people-analytics/android-push
+ * <p/>
+ * https://mixpanel.com/docs/people-analytics/android-push
  *
  * @author mixpanel
- *
  */
 public class MainActivity extends AppCompatActivity {
+    private static final String LOGTAG = "Mixpanel";
 
     /*
      * You will use a Mixpanel API token to allow your app to send data to Mixpanel. To get your token
@@ -81,10 +81,15 @@ public class MainActivity extends AppCompatActivity {
      */
     public static final String ANDROID_PUSH_SENDER_ID = "YOUR SENDER ID";
 
+    private static final String MIXPANEL_DISTINCT_ID_NAME = "Mixpanel Example $distinctid";
+    private static final int PHOTO_WAS_PICKED = 2;
+
+    private MixpanelAPI mMixpanel;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        final String trackingDistinctId = getTrackingDistinctId();
+        String trackingDistinctId = getTrackingDistinctId();
 
         // Initialize the Mixpanel library for tracking and push notifications.
         mMixpanel = MixpanelAPI.getInstance(this, MIXPANEL_API_TOKEN);
@@ -113,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_main, menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -121,8 +126,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        final long nowInHours = hoursSinceEpoch();
-        final int hourOfTheDay = hourOfTheDay();
+        long nowInHours = hoursSinceEpoch();
+        int hourOfTheDay = hourOfTheDay();
 
         // For our simple test app, we're interested tracking
         // when the user views our application.
@@ -136,11 +141,11 @@ public class MainActivity extends AppCompatActivity {
         // with the value of the first ever call for this user.)
         // all the change we make below are LOCAL. No API requests are made.
         try {
-            final JSONObject properties = new JSONObject();
+            JSONObject properties = new JSONObject();
             properties.put("first viewed on", nowInHours);
             properties.put("user domain", "(unknown)"); // default value
             mMixpanel.registerSuperPropertiesOnce(properties);
-        } catch (final JSONException e) {
+        } catch (JSONException e) {
             throw new RuntimeException("Could not encode hour first viewed as JSON");
         }
 
@@ -149,10 +154,10 @@ public class MainActivity extends AppCompatActivity {
         // we want to send a current value of "hour of the day" for every event.
         // As usual,all of the user's super properties will be appended onto this event.
         try {
-            final JSONObject properties = new JSONObject();
+            JSONObject properties = new JSONObject();
             properties.put("hour of the day", hourOfTheDay);
             mMixpanel.track("App Resumed", properties);
-        } catch(final JSONException e) {
+        } catch (JSONException e) {
             throw new RuntimeException("Could not encode hour of the day in JSON");
         }
 
@@ -168,17 +173,17 @@ public class MainActivity extends AppCompatActivity {
     // In this method, we update a Mixpanel people profile using MixpanelAPI.People.set()
     // and set some persistent properties that will be sent with
     // all future track() calls using MixpanelAPI.registerSuperProperties()
-    public void sendToMixpanel(final View view) {
+    public void sendToMixpanel(View view) {
 
-        final EditText firstNameEdit = (EditText) findViewById(R.id.edit_first_name);
-        final EditText lastNameEdit = (EditText) findViewById(R.id.edit_last_name);
-        final EditText emailEdit = (EditText) findViewById(R.id.edit_email_address);
+        EditText firstNameEdit = (EditText) findViewById(R.id.edit_first_name);
+        EditText lastNameEdit = (EditText) findViewById(R.id.edit_last_name);
+        EditText emailEdit = (EditText) findViewById(R.id.edit_email_address);
 
-        final String firstName = firstNameEdit.getText().toString();
-        final String lastName = lastNameEdit.getText().toString();
-        final String email = emailEdit.getText().toString();
+        String firstName = firstNameEdit.getText().toString();
+        String lastName = lastNameEdit.getText().toString();
+        String email = emailEdit.getText().toString();
 
-        final MixpanelAPI.People people = mMixpanel.getPeople();
+        MixpanelAPI.People people = mMixpanel.getPeople();
 
         // Update the basic data in the user's People Analytics record.
         // Unlike events, People Analytics always stores the most recent value
@@ -199,10 +204,10 @@ public class MainActivity extends AppCompatActivity {
         // instead of registerSuperPropertiesOnce so we can overwrite old values
         // as we get new information.
         try {
-            final JSONObject domainProperty = new JSONObject();
+            JSONObject domainProperty = new JSONObject();
             domainProperty.put("user domain", domainFromEmailAddress(email));
             mMixpanel.registerSuperProperties(domainProperty);
-        } catch (final JSONException e) {
+        } catch (JSONException e) {
             throw new RuntimeException("Cannot write user email address domain as a super property");
         }
 
@@ -216,8 +221,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // This is an example of how you can use Mixpanel's revenue tracking features from Android.
-    public void recordRevenue(final View view) {
-        final MixpanelAPI.People people = mMixpanel.getPeople();
+    public void recordRevenue(View view) {
+        MixpanelAPI.People people = mMixpanel.getPeople();
         // Call trackCharge() with a floating point amount
         // (for example, the amount of money the user has just spent on a purchase)
         // and an optional set of properties describing the purchase.
@@ -237,25 +242,25 @@ public class MainActivity extends AppCompatActivity {
 
     ////////////////////////////////////////////////////
 
-    public void setBackgroundImage(final View view) {
-        final Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+    public void setBackgroundImage(View view) {
+        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
         photoPickerIntent.setType("image/*");
         startActivityForResult(photoPickerIntent, PHOTO_WAS_PICKED);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (PHOTO_WAS_PICKED == requestCode && null != data) {
-            final Uri imageUri = data.getData();
-            if (null != imageUri) {
+        if (PHOTO_WAS_PICKED == requestCode && data != null) {
+            Uri imageUri = data.getData();
+            if (imageUri != null) {
                 // AsyncTask, please...
-                final ContentResolver contentResolver = getContentResolver();
+                ContentResolver contentResolver = getContentResolver();
                 try {
-                    final InputStream imageStream = contentResolver.openInputStream(imageUri);
-                    System.out.println("DRAWING IMAGE FROM URI " + imageUri);
-                    final Bitmap background = BitmapFactory.decodeStream(imageStream);
+                    InputStream imageStream = contentResolver.openInputStream(imageUri);
+                    Log.d(LOGTAG, "DRAWING IMAGE FROM URI " + imageUri);
+                    Bitmap background = BitmapFactory.decodeStream(imageStream);
                     getWindow().setBackgroundDrawable(new BitmapDrawable(getResources(), background));
-                } catch (final FileNotFoundException e) {
+                } catch (FileNotFoundException e) {
                     Log.e(LOGTAG, "Image apparently has gone away", e);
                 }
             }
@@ -263,28 +268,28 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private String getTrackingDistinctId() {
-        final SharedPreferences prefs = getPreferences(MODE_PRIVATE);
+        SharedPreferences prefs = getPreferences(MODE_PRIVATE);
 
         String ret = prefs.getString(MIXPANEL_DISTINCT_ID_NAME, null);
         if (ret == null) {
             ret = generateDistinctId();
-            final SharedPreferences.Editor prefsEditor = prefs.edit();
+            SharedPreferences.Editor prefsEditor = prefs.edit();
             prefsEditor.putString(MIXPANEL_DISTINCT_ID_NAME, ret);
-            prefsEditor.commit();
+            prefsEditor.apply();
         }
 
         return ret;
     }
 
-    // These disinct ids are here for the purposes of illustration.
+    // These distinct ids are here for the purposes of illustration.
     // In practice, there are great advantages to using distinct ids that
     // are easily associated with user identity, either from server-side
     // sources, or user logins. A common best practice is to maintain a field
     // in your users table to store mixpanel distinct_id, so it is easily
-    // accesible for use in attributing cross platform or server side events.
+    // accessible for use in attributing cross platform or server side events.
     private String generateDistinctId() {
-        final Random random = new Random();
-        final byte[] randomBytes = new byte[32];
+        Random random = new Random();
+        byte[] randomBytes = new byte[32];
         random.nextBytes(randomBytes);
         return Base64.encodeToString(randomBytes, Base64.NO_WRAP | Base64.NO_PADDING);
     }
@@ -293,28 +298,20 @@ public class MainActivity extends AppCompatActivity {
     // conveniences
 
     private int hourOfTheDay() {
-        final Calendar calendar = Calendar.getInstance();
-        return calendar.get(Calendar.HOUR_OF_DAY);
+        return (Calendar.getInstance()).get(Calendar.HOUR_OF_DAY);
     }
 
     private long hoursSinceEpoch() {
-        final Date now = new Date();
-        final long nowMillis = now.getTime();
-        return nowMillis / 1000 * 60 * 60;
+        return (new Date()).getTime() / 1000 * 60 * 60;
     }
 
     private String domainFromEmailAddress(String email) {
         String ret = "";
-        final int atSymbolIndex = email.indexOf('@');
+        int atSymbolIndex = email.indexOf('@');
         if ((atSymbolIndex > -1) && (email.length() > atSymbolIndex)) {
             ret = email.substring(atSymbolIndex + 1);
         }
 
         return ret;
     }
-
-    private MixpanelAPI mMixpanel;
-    private static final String MIXPANEL_DISTINCT_ID_NAME = "Mixpanel Example $distinctid";
-    private static final int PHOTO_WAS_PICKED = 2;
-    private static final String LOGTAG = "Mixpanel Example Application";
 }
