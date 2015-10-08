@@ -13,15 +13,6 @@ android {
         targetSdkVersion 21
         testApplicationId "com.mixpanel.android.mpmetrics"
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
-
-        lintOptions {
-            abortOnError true
-            warningsAsErrors true
-            disable "UnusedResources"
-        }
-    }
-    lintOptions {
-        abortOnError false
     }
 }
 
