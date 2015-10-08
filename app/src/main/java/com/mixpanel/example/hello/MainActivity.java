@@ -29,20 +29,20 @@ import java.util.Random;
 /**
  * A little application that allows people to update their Mixpanel information,
  * and receive push notifications from a Mixpanel project.
- *
+ * <p/>
  * For more information about integrating Mixpanel with your Android application,
  * please check out:
- *
- *     https://mixpanel.com/docs/integration-libraries/android
- *
+ * <p/>
+ * https://mixpanel.com/docs/integration-libraries/android
+ * <p/>
  * For instructions on enabling push notifications from Mixpanel, please see
- *
- *     https://mixpanel.com/docs/people-analytics/android-push
+ * <p/>
+ * https://mixpanel.com/docs/people-analytics/android-push
  *
  * @author mixpanel
- *
  */
 public class MainActivity extends AppCompatActivity {
+    private static final String LOGTAG = "Mixpanel";
 
     /*
      * You will use a Mixpanel API token to allow your app to send data to Mixpanel. To get your token
@@ -81,6 +81,11 @@ public class MainActivity extends AppCompatActivity {
      */
     public static final String ANDROID_PUSH_SENDER_ID = "YOUR SENDER ID";
 
+    private static final String MIXPANEL_DISTINCT_ID_NAME = "Mixpanel Example $distinctid";
+    private static final int PHOTO_WAS_PICKED = 2;
+
+    private MixpanelAPI mMixpanel;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_main, menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -121,8 +126,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        final long nowInHours = hoursSinceEpoch();
-        final int hourOfTheDay = hourOfTheDay();
+        final long nowInHours = (new Date()).getTime() / 1000 * 60 * 60;
+        final int hourOfTheDay = (Calendar.getInstance()).get(Calendar.HOUR_OF_DAY);
 
         // For our simple test app, we're interested tracking
         // when the user views our application.
@@ -252,7 +257,7 @@ public class MainActivity extends AppCompatActivity {
                 final ContentResolver contentResolver = getContentResolver();
                 try {
                     final InputStream imageStream = contentResolver.openInputStream(imageUri);
-                    System.out.println("DRAWING IMAGE FROM URI " + imageUri);
+                    Log.d(LOGTAG, "DRAWING IMAGE FROM URI " + imageUri);
                     final Bitmap background = BitmapFactory.decodeStream(imageStream);
                     getWindow().setBackgroundDrawable(new BitmapDrawable(getResources(), background));
                 } catch (final FileNotFoundException e) {
@@ -270,18 +275,18 @@ public class MainActivity extends AppCompatActivity {
             ret = generateDistinctId();
             final SharedPreferences.Editor prefsEditor = prefs.edit();
             prefsEditor.putString(MIXPANEL_DISTINCT_ID_NAME, ret);
-            prefsEditor.commit();
+            prefsEditor.apply();
         }
 
         return ret;
     }
 
-    // These disinct ids are here for the purposes of illustration.
+    // These distinct ids are here for the purposes of illustration.
     // In practice, there are great advantages to using distinct ids that
     // are easily associated with user identity, either from server-side
     // sources, or user logins. A common best practice is to maintain a field
     // in your users table to store mixpanel distinct_id, so it is easily
-    // accesible for use in attributing cross platform or server side events.
+    // accessible for use in attributing cross platform or server side events.
     private String generateDistinctId() {
         final Random random = new Random();
         final byte[] randomBytes = new byte[32];
@@ -292,17 +297,6 @@ public class MainActivity extends AppCompatActivity {
     ///////////////////////////////////////////////////////
     // conveniences
 
-    private int hourOfTheDay() {
-        final Calendar calendar = Calendar.getInstance();
-        return calendar.get(Calendar.HOUR_OF_DAY);
-    }
-
-    private long hoursSinceEpoch() {
-        final Date now = new Date();
-        final long nowMillis = now.getTime();
-        return nowMillis / 1000 * 60 * 60;
-    }
-
     private String domainFromEmailAddress(String email) {
         String ret = "";
         final int atSymbolIndex = email.indexOf('@');
@@ -312,9 +306,4 @@ public class MainActivity extends AppCompatActivity {
 
         return ret;
     }
-
-    private MixpanelAPI mMixpanel;
-    private static final String MIXPANEL_DISTINCT_ID_NAME = "Mixpanel Example $distinctid";
-    private static final int PHOTO_WAS_PICKED = 2;
-    private static final String LOGTAG = "Mixpanel";
 }
