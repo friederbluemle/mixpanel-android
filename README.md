@@ -1,5 +1,7 @@
 # mixpanel-android
 
+[![Build Status](https://travis-ci.org/friederbluemle/mixpanel-android.svg?branch=update-project-new)](https://travis-ci.org/friederbluemle/mixpanel-android)
+
 ## Getting Started
 
 You can find getting started guides for using Mixpanel at:
