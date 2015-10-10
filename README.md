@@ -1,5 +1,7 @@
-Getting Started
----------------
+# mixpanel-android
+
+## Getting Started
+
 You can find getting started guides for using Mixpanel at:
 
 * https://mixpanel.com/help/reference/android#installing-as for installing in Android Studio.
@@ -11,8 +13,7 @@ You can find getting started guides for using Mixpanel at:
 
 See https://github.com/mixpanel/sample-android-mixpanel-integration for a full featured sample application.
 
-License
--------
+## License
 
 See LICENSE File for details. The Base64Coder,
 ConfigurationChecker, and StackBlurManager classes, and the entirety of the
@@ -25,13 +26,12 @@ The StackBlurManager class uses an algorithm by Mario Klingemann <mario@quansimo
 You can learn more about the algorithm at
 http://www.quasimondo.com/StackBlurForCanvas/StackBlurDemo.html.
 
-Want to Contribute?
--------------------
+## Want to Contribute?
+
 The Mixpanel library for Android is an open source project, and we'd love to see your contributions!
 We'd also love for you to come and work with us! Check out http://boards.greenhouse.io/mixpanel/jobs/25078#.U_4BBEhORKU for details.
 
-Changelog
----------
+## Changelog
 
 #### v4.7.0
 
@@ -48,7 +48,6 @@ Changelog
  * Fix a bug where the user defined listener (by calling
    mMixpanel.getPeople().addOnMixpanelUpdatesReceivedListener())
    is not called on new variants receiving
-
 
 #### v4.6.1
 
