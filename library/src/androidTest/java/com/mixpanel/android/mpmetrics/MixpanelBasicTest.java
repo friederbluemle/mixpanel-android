@@ -11,12 +11,12 @@ import android.os.Parcel;
 import android.test.AndroidTestCase;
 import android.test.mock.MockContext;
 import android.test.mock.MockPackageManager;
+import android.util.Pair;
 
 import com.mixpanel.android.util.Base64Coder;
 import com.mixpanel.android.util.RemoteService;
 import com.mixpanel.android.util.HttpService;
 
-import org.apache.http.NameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -410,7 +410,7 @@ public class MixpanelBasicTest extends AndroidTestCase {
 
         final RemoteService mockPoster = new HttpService() {
             @Override
-            public byte[] performRequest(String endpointUrl, List<NameValuePair> nameValuePairs, SSLSocketFactory socketFactory) {
+            public byte[] performRequest(String endpointUrl, List<Pair<String, String>> nameValuePairs, SSLSocketFactory socketFactory) {
                 final boolean isIdentified = isIdentifiedRef.get();
                 if (null == nameValuePairs) {
                     if (isIdentified) {
@@ -421,8 +421,8 @@ public class MixpanelBasicTest extends AndroidTestCase {
                     return TestUtils.bytes("{}");
                 }
 
-                assertEquals(nameValuePairs.get(0).getName(), "data");
-                final String decoded = Base64Coder.decodeString(nameValuePairs.get(0).getValue());
+                assertEquals(nameValuePairs.get(0).first, "data");
+                final String decoded = Base64Coder.decodeString(nameValuePairs.get(0).second);
 
                 try {
                     messages.put("SENT FLUSH " + endpointUrl);
@@ -916,10 +916,10 @@ public class MixpanelBasicTest extends AndroidTestCase {
     public void testAlias() {
         final RemoteService mockPoster = new HttpService() {
             @Override
-            public byte[] performRequest(String endpointUrl, List<NameValuePair> nameValuePairs, SSLSocketFactory socketFactory) {
+            public byte[] performRequest(String endpointUrl, List<Pair<String, String>> nameValuePairs, SSLSocketFactory socketFactory) {
                 try {
-                    assertEquals(nameValuePairs.get(0).getName(), "data");
-                    final String jsonData = Base64Coder.decodeString(nameValuePairs.get(0).getValue());
+                    assertEquals(nameValuePairs.get(0).first, "data");
+                    final String jsonData = Base64Coder.decodeString(nameValuePairs.get(0).second);
                     JSONArray msg = new JSONArray(jsonData);
                     JSONObject event = msg.getJSONObject(0);
                     JSONObject properties = event.getJSONObject("properties");

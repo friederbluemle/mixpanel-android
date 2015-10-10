@@ -3,12 +3,12 @@ package com.mixpanel.android.mpmetrics;
 import android.content.Context;
 import android.os.Bundle;
 import android.test.AndroidTestCase;
+import android.util.Pair;
 
 import com.mixpanel.android.util.RemoteService;
 import com.mixpanel.android.util.HttpService;
 import com.mixpanel.android.viewcrawler.UpdatesFromMixpanel;
 
-import org.apache.http.NameValuePair;
 import org.json.JSONArray;
 
 import java.io.IOException;
@@ -337,7 +337,7 @@ public class DecideCheckerTest extends AndroidTestCase {
 
     private static class MockPoster extends HttpService {
         @Override
-        public byte[] performRequest(String url, List<NameValuePair> pairs, SSLSocketFactory socketFactory) throws IOException {
+        public byte[] performRequest(String url, List<Pair<String, String>> pairs, SSLSocketFactory socketFactory) throws IOException {
             assertNull(pairs);
             requestedUrls.add(url);
 

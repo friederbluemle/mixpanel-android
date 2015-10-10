@@ -4,11 +4,9 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
+import android.util.Pair;
 
 import com.mixpanel.android.mpmetrics.MPConfig;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -16,8 +14,10 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -47,8 +47,21 @@ public class HttpService implements RemoteService {
         return isOnline;
     }
 
+    private String getRawPostBody(List<Pair<String, String>> params) throws UnsupportedEncodingException {
+        StringBuilder body = new StringBuilder();
+        for (Pair<String, String> param : params) {
+            if (body.length() > 0) {
+                body.append("&");
+            }
+            body.append(URLEncoder.encode(param.first, "UTF-8"))
+                .append("=")
+                .append(URLEncoder.encode(param.second, "UTF-8"));
+        }
+        return body.toString();
+    }
+
     @Override
-    public byte[] performRequest(String endpointUrl, List<NameValuePair> params, SSLSocketFactory socketFactory) throws ServiceUnavailableException, IOException {
+    public byte[] performRequest(String endpointUrl, List<Pair<String, String>> params, SSLSocketFactory socketFactory) throws ServiceUnavailableException, IOException {
         if (MPConfig.DEBUG) {
             Log.v(LOGTAG, "Attempting request to " + endpointUrl);
         }
@@ -77,12 +90,12 @@ public class HttpService implements RemoteService {
                 connection.setReadTimeout(10000);
                 if (null != params) {
                     connection.setDoOutput(true);
-                    final UrlEncodedFormEntity form = new UrlEncodedFormEntity(params, "UTF-8");
+                    final byte[] rawPostBody = getRawPostBody(params).getBytes();
                     connection.setRequestMethod("POST");
-                    connection.setFixedLengthStreamingMode((int)form.getContentLength());
+                    connection.setFixedLengthStreamingMode(rawPostBody.length);
                     out = connection.getOutputStream();
                     bout = new BufferedOutputStream(out);
-                    form.writeTo(bout);
+                    bout.write(rawPostBody);
                     bout.close();
                     bout = null;
                     out.close();

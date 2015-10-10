@@ -9,6 +9,7 @@ import android.os.Message;
 import android.os.SystemClock;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.Pair;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -17,8 +18,6 @@ import com.mixpanel.android.util.Base64Coder;
 import com.mixpanel.android.util.RemoteService;
 import com.mixpanel.android.util.HttpService;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -409,10 +408,11 @@ import javax.net.ssl.SSLSocketFactory;
                     final String rawMessage = eventsData[1];
 
                     final String encodedData = Base64Coder.encodeString(rawMessage);
-                    final List<NameValuePair> params = new ArrayList<NameValuePair>(1);
-                    params.add(new BasicNameValuePair("data", encodedData));
+
+                    final List<Pair<String, String>> params = new ArrayList<>(1);
+                    params.add(new Pair<>("data", encodedData));
                     if (MPConfig.DEBUG) {
-                        params.add(new BasicNameValuePair("verbose", "1"));
+                        params.add(new Pair<>("verbose", "1"));
                     }
 
                     boolean deleteEvents = true;
