@@ -1,27 +1,36 @@
 #!/bin/bash
 
-TEST_APP_DIR=test-application
+PROJECT_ROOT=..
 TESTS=(test_property.py test_layout.py)
-HTTP_SERVER_PID=NULL
-SELEDROID_PID=NULL
-ANDROID_SDK_DIR=~/Library/Android/sdk/
+SELENDROID_VERSION=0.16.0
 
-function build_apk {
-    pushd ${TEST_APP_DIR}
-    export ANDROID_HOME=$ANDROID_SDK_DIR
-    ../../gradlew clean :assembleDebug
-    popd
+HTTP_SERVER_PID=NULL
+SELENDROID_PID=NULL
+SELENDROID_JAR=selendroid-standalone-$SELENDROID_VERSION-with-dependencies.jar
+APK_TO_TEST=$PROJECT_ROOT/app/build/outputs/apk/app-debug.apk
+
+function get_selendroid {
+    if [ ! -f $SELENDROID_JAR ]
+    then
+        wget https://github.com/selendroid/selendroid/releases/download/$SELENDROID_VERSION/$SELENDROID_JAR
+    fi
 }
 
-function start_node_server {
+function build_apk {
+    if [ ! -f $APK_TO_TEST ]
+    then
+        (cd $PROJECT_ROOT;./gradlew clean assembleDebug)
+    fi
+}
+
+function start_http_server {
     python http_server.py&
     HTTP_SERVER_PID=$!
 }
 
 function start_selendroid_server {
-    export ANDROID_HOME=$ANDROID_SDK_DIR
-    java -jar selendroid-standalone-0.15.0-with-dependencies.jar -app $TEST_APP_DIR/build/outputs/apk/test-application-debug.apk&
-    SELEDROID_PID=$!
+    java -jar $SELENDROID_JAR -app $APK_TO_TEST&
+    SELENDROID_PID=$!
 }
 
 function run_test {
@@ -42,7 +51,7 @@ function run_test {
     red=`tput setaf 1`
     normal=`tput sgr0`
     echo ""
-    echo "${bold}Total test sutie(s): ${total_cnt}${normal}"
+    echo "${bold}Total test suite(s): ${total_cnt}${normal}"
     echo "${green}Passed test suite(s): $((total_cnt-failure_cnt))${normal}"
     echo "${red}Failed test suite(s): ${failure_cnt}${normal}"
 }
@@ -53,14 +62,15 @@ function clean_up {
         kill $HTTP_SERVER_PID
     fi
 
-    if [ $SELEDROID_PID != NULL ]
+    if [ $SELENDROID_PID != NULL ]
     then
-        kill $SELEDROID_PID
+        kill $SELENDROID_PID
     fi
 }
 
+get_selendroid
 build_apk
-start_node_server
+start_http_server
 start_selendroid_server
 # wait for server initialization
 sleep 10
