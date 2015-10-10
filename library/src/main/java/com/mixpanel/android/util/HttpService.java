@@ -3,22 +3,22 @@ package com.mixpanel.android.util;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.util.Log;
+import android.util.Pair;
 
 import com.mixpanel.android.mpmetrics.MPConfig;
 
 import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Map;
+import java.net.URLEncoder;
+import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
@@ -47,8 +47,21 @@ public class HttpService implements RemoteService {
         return isOnline;
     }
 
+    private String getRawPostBody(List<Pair<String, String>> params) throws UnsupportedEncodingException {
+        StringBuilder body = new StringBuilder();
+        for (Pair<String, String> param : params) {
+            if (body.length() > 0) {
+                body.append("&");
+            }
+            body.append(URLEncoder.encode(param.first, "UTF-8"))
+                .append("=")
+                .append(URLEncoder.encode(param.second, "UTF-8"));
+        }
+        return body.toString();
+    }
+
     @Override
-    public byte[] performRequest(String endpointUrl, Map<String, Object> params, SSLSocketFactory socketFactory) throws ServiceUnavailableException, IOException {
+    public byte[] performRequest(String endpointUrl, List<Pair<String, String>> params, SSLSocketFactory socketFactory) throws ServiceUnavailableException, IOException {
         if (MPConfig.DEBUG) {
             Log.v(LOGTAG, "Attempting request to " + endpointUrl);
         }
@@ -76,19 +89,13 @@ public class HttpService implements RemoteService {
                 connection.setConnectTimeout(2000);
                 connection.setReadTimeout(10000);
                 if (null != params) {
-                    Uri.Builder builder = new Uri.Builder();
-                    for (Map.Entry<String, Object> param : params.entrySet()) {
-                        builder.appendQueryParameter(param.getKey(), param.getValue().toString());
-                    }
-                    String query = builder.build().getEncodedQuery();
-
-                    connection.setFixedLengthStreamingMode(query.getBytes().length);
+                    final byte[] rawPostBody = getRawPostBody(params).getBytes();
+                    connection.setFixedLengthStreamingMode(rawPostBody.length);
                     connection.setDoOutput(true);
                     connection.setRequestMethod("POST");
                     out = connection.getOutputStream();
                     bout = new BufferedOutputStream(out);
-                    bout.write(query.getBytes("UTF-8"));
-                    bout.flush();
+                    bout.write(rawPostBody);
                     bout.close();
                     bout = null;
                     out.close();

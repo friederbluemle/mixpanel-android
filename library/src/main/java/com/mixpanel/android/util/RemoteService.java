@@ -1,10 +1,10 @@
 package com.mixpanel.android.util;
 
 import android.content.Context;
-
+import android.util.Pair;
 
 import java.io.IOException;
-import java.util.Map;
+import java.util.List;
 
 import javax.net.ssl.SSLSocketFactory;
 
@@ -12,7 +12,7 @@ import javax.net.ssl.SSLSocketFactory;
 public interface RemoteService {
     boolean isOnline(Context context);
 
-    byte[] performRequest(String endpointUrl, Map<String, Object> params, SSLSocketFactory socketFactory)
+    byte[] performRequest(String endpointUrl, List<Pair<String, String>> params, SSLSocketFactory socketFactory)
             throws ServiceUnavailableException, IOException;
 
     class ServiceUnavailableException extends Exception {

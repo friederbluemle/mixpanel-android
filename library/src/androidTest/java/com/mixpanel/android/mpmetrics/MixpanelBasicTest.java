@@ -11,6 +11,7 @@ import android.os.Parcel;
 import android.test.AndroidTestCase;
 import android.test.mock.MockContext;
 import android.test.mock.MockPackageManager;
+import android.util.Pair;
 
 import com.mixpanel.android.util.Base64Coder;
 import com.mixpanel.android.util.RemoteService;
@@ -405,7 +406,7 @@ public class MixpanelBasicTest extends AndroidTestCase {
 
         final RemoteService mockPoster = new HttpService() {
             @Override
-            public byte[] performRequest(String endpointUrl, Map<String, Object> params, SSLSocketFactory socketFactory) {
+            public byte[] performRequest(String endpointUrl, List<Pair<String, String>> params, SSLSocketFactory socketFactory) {
                 final boolean isIdentified = isIdentifiedRef.get();
                 if (null == params) {
                     if (isIdentified) {
@@ -416,8 +417,8 @@ public class MixpanelBasicTest extends AndroidTestCase {
                     return TestUtils.bytes("{}");
                 }
 
-                assertTrue(params.containsKey("data"));
-                final String decoded = Base64Coder.decodeString(params.get("data").toString());
+                assertEquals(params.get(0).first, "data");
+                final String decoded = Base64Coder.decodeString(params.get(0).second);
 
                 try {
                     messages.put("SENT FLUSH " + endpointUrl);
@@ -911,10 +912,10 @@ public class MixpanelBasicTest extends AndroidTestCase {
     public void testAlias() {
         final RemoteService mockPoster = new HttpService() {
             @Override
-            public byte[] performRequest(String endpointUrl, Map<String, Object> params, SSLSocketFactory socketFactory) {
+            public byte[] performRequest(String endpointUrl, List<Pair<String, String>> params, SSLSocketFactory socketFactory) {
                 try {
-                    assertTrue(params.containsKey("data"));
-                    final String jsonData = Base64Coder.decodeString(params.get("data").toString());
+                    assertEquals(params.get(0).first, "data");
+                    final String jsonData = Base64Coder.decodeString(params.get(0).second);
                     JSONArray msg = new JSONArray(jsonData);
                     JSONObject event = msg.getJSONObject(0);
                     JSONObject properties = event.getJSONObject("properties");

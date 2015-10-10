@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.test.AndroidTestCase;
+import android.util.Pair;
 
 import com.mixpanel.android.util.ImageStore;
 import com.mixpanel.android.util.RemoteService;
@@ -17,7 +18,6 @@ import org.json.JSONArray;
 
 import java.io.ByteArrayOutputStream;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -64,7 +64,7 @@ public class DecideFunctionalTest extends AndroidTestCase {
         mExpectations = new Expectations();
         mMockPoster = new HttpService() {
             @Override
-            public byte[] performRequest(String endpointUrl, Map<String, Object> params, SSLSocketFactory socketFactory) {
+            public byte[] performRequest(String endpointUrl, List<Pair<String, String>> params, SSLSocketFactory socketFactory) {
                 return mExpectations.setExpectationsRequest(endpointUrl, params);
             }
         };
@@ -303,7 +303,7 @@ public class DecideFunctionalTest extends AndroidTestCase {
             }
         }
 
-        public synchronized byte[] setExpectationsRequest(final String endpointUrl, Map<String, Object> params) {
+        public synchronized byte[] setExpectationsRequest(final String endpointUrl, List<Pair<String, String>> params) {
             if (endpointUrl.equals(mExpectUrl)) {
                 return TestUtils.bytes(mResponse);
             } else if (Pattern.matches("^http://mixpanel.com/Balok.{0,3}\\.jpg$", endpointUrl)) {
@@ -328,7 +328,7 @@ public class DecideFunctionalTest extends AndroidTestCase {
         private String mExpectUrl = null;
         private String mResponse = null;
         private String badUrl = null;
-        private Map<String, Object> badParams = null;
+        private List<Pair<String, String>> badParams = null;
         private boolean mResultsFound = false;
         private boolean resultsBad = false;
         private byte[] imageBytes;

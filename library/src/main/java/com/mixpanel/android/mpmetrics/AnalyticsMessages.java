@@ -9,6 +9,7 @@ import android.os.Message;
 import android.os.SystemClock;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.Pair;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -24,8 +25,10 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.net.ssl.SSLSocketFactory;
@@ -406,10 +409,10 @@ import javax.net.ssl.SSLSocketFactory;
                     final String rawMessage = eventsData[1];
 
                     final String encodedData = Base64Coder.encodeString(rawMessage);
-                    final Map<String, Object> params = new HashMap<String, Object>();
-                    params.put("data", encodedData);
+                    final List<Pair<String, String>> params = new ArrayList<>(1);
+                    params.add(new Pair<>("data", encodedData));
                     if (MPConfig.DEBUG) {
-                        params.put("verbose", "1");
+                        params.add(new Pair<>("verbose", "1"));
                     }
 
                     boolean deleteEvents = true;
