@@ -25,9 +25,9 @@ class AndroidTest(unittest.TestCase):
         send_to_mixpanel_location = self.driver.find_element_by_id('send_to_mixpanel').location
         send_revenue_location = self.driver.find_element_by_id('send_revenue').location
 
-        self.assertTrue(send_to_mixpanel_location['y'] < edit_email_address_location['y'])
-        self.assertTrue(send_to_mixpanel_location['x'] > edit_email_address_location['x'])
-        self.assertEquals(send_revenue_location['y'], edit_email_address_location['y'])
+        self.assertTrue(send_to_mixpanel_location['y'] > edit_email_address_location['y'])
+        self.assertEquals(send_to_mixpanel_location['x'], edit_email_address_location['x'])
+        self.assertTrue(send_revenue_location['y'] > edit_email_address_location['y'])
 
     def test_layout_circular_dependency(self):
         decide_message = '{"notifications":[],"surveys":[],"variants":[{"tweaks":[],"actions":[{"args":[{"view_id_name":"edit_email_address","verb":3,"anchor_id_name":"send_to_mixpanel"}],"name":"c155","path":[{"prefix":"shortest","index":0,"id":16908290},{"view_class":"android.widget.RelativeLayout","index":0}],"change_type":"layout"}],"id":8990,"experiment_id":4302}]}'
@@ -48,19 +48,19 @@ class AndroidTest(unittest.TestCase):
         set_background_image_location = self.driver.find_element_by_id('set_background_image').location
         set_background_image_size = self.driver.find_element_by_id('set_background_image').size
 
-        self.assertEquals(send_to_mixpanel_location['y'], edit_first_name_location['y'])
-        self.assertTrue(send_to_mixpanel_location['x'] > send_revenue_location['x'])
-        self.assertEquals(edit_email_address_location['y'], edit_last_name_location['y'])
-        self.assertEquals(set_background_image_location['x'], 0)
-        self.assertTrue(set_background_image_location['y'] < edit_last_name_location['y'])
+        self.assertTrue(send_to_mixpanel_location['y'] > edit_first_name_location['y'])
+        self.assertEquals(send_to_mixpanel_location['x'], send_revenue_location['x'])
+        self.assertEquals(edit_email_address_location['x'], edit_last_name_location['x'])
+        self.assertTrue(set_background_image_location['y'] > 0)
+        self.assertTrue(set_background_image_location['y'] > edit_last_name_location['y'])
         self.assertTrue(set_background_image_size['width'] > send_to_mixpanel_size['width'])
-        self.assertTrue(set_background_image_size['height'] > send_to_mixpanel_size['height'])
+        self.assertEquals(set_background_image_size['height'], send_to_mixpanel_size['height'])
 
     def test_layout_absent_views(self):
         decide_message = '{"notifications":[],"surveys":[],"variants":[{"tweaks":[],"actions":[{"args":[{"view_id_name":"edit_email_address","verb":3,"anchor_id_name":"0"}],"name":"c155","path":[{"prefix":"shortest","index":0,"id":16908290},{"view_class":"android.widget.RelativeLayout","index":0}],"change_type":"layout"},{"args":[{"view_id_name":"fake_view","verb":3,"anchor_id_name":"0"}],"name":"c155","path":[{"prefix":"shortest","index":0,"id":16908290},{"view_class":"android.widget.RelativeLayout","index":0}],"change_type":"layout"},{"args":[{"view_id_name":"edit_email_address","verb":3,"anchor_id_name":"fake_view"}],"name":"c155","path":[{"prefix":"shortest","index":0,"id":16908290},{"view_class":"android.widget.RelativeLayout","index":0}],"change_type":"layout"}],"id":8990,"experiment_id":4302}]}'
         self._launch_app(decide_message)
 
-        self.assertEquals(self.driver.find_element_by_id('edit_email_address').location['y'], self.driver.find_element_by_id('edit_first_name').location['y'])
+        self.assertTrue(self.driver.find_element_by_id('edit_email_address').location['y'] > self.driver.find_element_by_id('edit_first_name').location['y'])
 
 if __name__ == '__main__':
 	unittest.main()
