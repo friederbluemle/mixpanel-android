@@ -17,6 +17,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.mixpanel.android.BuildConfig;
 import com.mixpanel.android.R;
 import com.mixpanel.android.viewcrawler.UpdatesFromMixpanel;
 import com.mixpanel.android.viewcrawler.TrackingDebug;
@@ -114,7 +115,7 @@ public class MixpanelAPI {
     /**
      * String version of the library.
      */
-    public static final String VERSION = MPConfig.VERSION;
+    public static final String VERSION = BuildConfig.VERSION_NAME;
 
     /**
      * Declare a string-valued tweak, and return a reference you can use to read the value of the tweak.
@@ -200,7 +201,7 @@ public class MixpanelAPI {
         mConfig = getConfig();
 
         final Map<String, String> deviceInfo = new HashMap<String, String>();
-        deviceInfo.put("$android_lib_version", MPConfig.VERSION);
+        deviceInfo.put("$android_lib_version", BuildConfig.VERSION_NAME);
         deviceInfo.put("$android_os", "Android");
         deviceInfo.put("$android_os_version", Build.VERSION.RELEASE == null ? "UNKNOWN" : Build.VERSION.RELEASE);
         deviceInfo.put("$android_manufacturer", Build.MANUFACTURER == null ? "UNKNOWN" : Build.MANUFACTURER);

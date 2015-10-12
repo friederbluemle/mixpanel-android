@@ -13,6 +13,7 @@ import android.util.Log;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.mixpanel.android.BuildConfig;
 import com.mixpanel.android.util.Base64Coder;
 import com.mixpanel.android.util.RemoteService;
 import com.mixpanel.android.util.HttpService;
@@ -461,7 +462,7 @@ import javax.net.ssl.SSLSocketFactory;
                 final JSONObject ret = new JSONObject();
 
                 ret.put("mp_lib", "android");
-                ret.put("$lib_version", MPConfig.VERSION);
+                ret.put("$lib_version", BuildConfig.VERSION_NAME);
 
                 // For querying together with data from other libraries
                 ret.put("$os", "Android");

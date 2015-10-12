@@ -43,10 +43,6 @@ public class MixpanelBasicTest extends AndroidTestCase {
         Thread.sleep(500);
     } // end of setUp() method definition
 
-    public void testVersionsMatch() {
-        assertEquals(BuildConfig.MIXPANEL_VERSION, MPConfig.VERSION);
-    }
-
     public void testGeneratedDistinctId() {
         String fakeToken = UUID.randomUUID().toString();
         MixpanelAPI mixpanel = new TestUtils.CleanMixpanelAPI(getContext(), mMockPreferences, fakeToken);

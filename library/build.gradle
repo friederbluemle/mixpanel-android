@@ -13,6 +13,8 @@ android {
         // the relevant attributes of the <uses-sdk> tag in AndroidManifest.xml
         minSdkVersion 9
         targetSdkVersion 23
+        versionCode 1
+        versionName project.properties.version
         testApplicationId "com.mixpanel.android.mpmetrics"
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
     }
@@ -51,10 +53,6 @@ android {
                 charSet = 'UTF-8'
             }
         }
-    }
-
-    buildTypes.all { buildType ->
-        buildType.buildConfigField "String", "MIXPANEL_VERSION", "\"${project.properties.version}\""
     }
 }
 
