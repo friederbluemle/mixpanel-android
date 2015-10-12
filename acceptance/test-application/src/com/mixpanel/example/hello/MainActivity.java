@@ -316,5 +316,5 @@ public class MainActivity extends Activity {
     private MixpanelAPI mMixpanel;
     private static final String MIXPANEL_DISTINCT_ID_NAME = "Mixpanel Example $distinctid";
     private static final int PHOTO_WAS_PICKED = 2;
-    private static final String LOGTAG = "Mixpanel Example Application";
+    private static final String LOGTAG = "Mixpanel";
 }
